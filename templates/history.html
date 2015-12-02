@@ -1,0 +1,20 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    {% for object in object_list %}
+        <h1>{{ object.title }}</h1>
+        <p>{{ object.date }}</p>
+        <img src="{{ object.poster.url }}">
+    {% endfor %}
+
+    {% if paginator.num_pages > 1 %}
+        {% if page_obj.has_previous %}
+            <a href="/posts/{{ page_obj.previous_page_number }}/">&larr;</a>
+        {% endif %}
+        <span class="current_page">{{ paginator.number }}</span>
+        {% if page_obj.has_next %}
+            <a href="/posts/{{ page_obj.next_page_number }}/">&rarr;</a>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
