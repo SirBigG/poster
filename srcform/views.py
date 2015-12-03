@@ -6,6 +6,7 @@ from .models import Poster
 
 import urllib2
 import json
+import os
 
 
 OMDBAPI_BASE_URL = 'http://www.omdbapi.com/?t='
@@ -14,22 +15,22 @@ OMDBAPI_BASE_URL = 'http://www.omdbapi.com/?t='
 class SearchFormView(FormView):
     template_name = 'search_form.html'
     form_class = SearchForm
-    success_url = '/history/1/'
+    success_url = '/'
 
     def form_valid(self, form):
         response = self.get_response(form)
         if response['Response'] == 'True':
             if response['Poster'] == 'N/A':
-                # TODO: return message
-                raise ErrorList('p')
+                pass
             else:
                 title = response['Title']
                 poster = self.get_poster(response['Poster'])
                 if not self.poster_in(title):
                     Poster.objects.create(title=title, poster=poster)
-        else:
-            # TODO: return message
-            raise ErrorList('q')
+                if self.need_change(title, poster):
+                    pos = Poster.objects.filter(title=title)
+                    os.remove(pos.poster.url)
+                    pos.update(poster=poster)
         return super(SearchFormView, self).form_valid(form)
 
     def get_response(self, form):
@@ -53,8 +54,12 @@ class SearchFormView(FormView):
             return False
         return True
 
-    # TODO: if poster changed
-
+    def need_change(self, title, poster):
+        pos = Poster.objects.get(title=title)
+        if pos.poster.url == poster:
+            return False
+        else:
+            return True
 
 
 class HistoryView(ListView):
