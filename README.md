@@ -21,7 +21,7 @@ git clone  https://github.com/SirBigG/poster.git
 ```
 Go to the poster directory and install requirements:
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 And the last, you need settind database. This app work with PostgreSQL. Install postgreSQL and create database.
 Then go to the project settings and in DATABASES change NAME(your database name), USER(owner of db), PASSWORD(his password) and your HOST(for example: 127.0.0.0).
