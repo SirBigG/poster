@@ -10,6 +10,9 @@ class SearchForm(forms.Form):
                             )
 
     def get_url(self):
+        """
+        Return url for request to OMDBAPI.
+        """
         title = self.cleaned_data.get('title')
         title = title.split(' ')
         url = '+'.join(title)

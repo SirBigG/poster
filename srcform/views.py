@@ -17,6 +17,10 @@ class SearchFormView(FormView):
     success_url = '/'
 
     def form_valid(self, form, **kwargs):
+        """
+        Check form.
+        Return form and status message.
+        """
         response = self.get_response(form)
         if response['Response'] == 'True':
             if response['Poster'] == 'N/A':
@@ -42,12 +46,20 @@ class SearchFormView(FormView):
         return self.render_to_response(context)
 
     def get_response(self, form):
+        """
+        Passes to the OMDBAPI with user request and waits for a response.
+        Return response in json.
+        """
         url = OMDBAPI_BASE_URL + form.get_url()
         response = urllib2.urlopen(url)
         data = json.load(response)
         return data
 
     def get_poster(self, url):
+        """
+        Downloading poster and save it in /uploads/posters/ directory.
+        Return path to this file.
+        """
         poster = urllib2.urlopen(url).read()
         img_name = 'uploads/posters/%s' % url.split('/')[-1]
         f = open(img_name, 'wb')
@@ -56,6 +68,9 @@ class SearchFormView(FormView):
         return img_name
 
     def poster_in(self, title):
+        """
+        Return true if movie with this title in database else return false.
+        """
         try:
             Poster.objects.get(title=title)
         except Poster.DoesNotExist:
@@ -63,6 +78,9 @@ class SearchFormView(FormView):
         return True
 
     def need_change(self, title, poster):
+        """
+        Return true if poster name change else return false.
+        """
         pos = Poster.objects.get(title=title)
         if pos.poster.name == poster:
             return False
@@ -71,6 +89,9 @@ class SearchFormView(FormView):
 
 
 class HistoryView(ListView):
+    """
+    Return history of search in reverse order.
+    """
     model = Poster
     template_name = 'history.html'
     paginate_by = 20
