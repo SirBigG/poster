@@ -1,5 +1,4 @@
 from django.views.generic import FormView, ListView
-from django.forms.utils import ErrorList
 
 from .forms import SearchForm
 from .models import Poster
@@ -17,21 +16,30 @@ class SearchFormView(FormView):
     form_class = SearchForm
     success_url = '/'
 
-    def form_valid(self, form):
+    def form_valid(self, form, **kwargs):
         response = self.get_response(form)
         if response['Response'] == 'True':
             if response['Poster'] == 'N/A':
-                pass
+                message = "This movie doesn't have a poster."
             else:
                 title = response['Title']
                 poster = self.get_poster(response['Poster'])
                 if not self.poster_in(title):
                     Poster.objects.create(title=title, poster=poster)
+                    message = "Poster is found!!! You can find it in the 'History'."
+                else:
+                    message = "Poster is in base already. You can look through your 'History'."
                 if self.need_change(title, poster):
-                    pos = Poster.objects.filter(title=title)
+                    pos = Poster.objects.get(title=title)
                     os.remove(pos.poster.url)
                     pos.update(poster=poster)
-        return super(SearchFormView, self).form_valid(form)
+        else:
+            message = "There is a mistake in your request :( Please try again!"
+
+        context = self.get_context_data(**kwargs)
+        context['form'] = form
+        context['message'] = message
+        return self.render_to_response(context)
 
     def get_response(self, form):
         url = OMDBAPI_BASE_URL + form.get_url()
@@ -56,7 +64,7 @@ class SearchFormView(FormView):
 
     def need_change(self, title, poster):
         pos = Poster.objects.get(title=title)
-        if pos.poster.url == poster:
+        if pos.poster.name == poster:
             return False
         else:
             return True
