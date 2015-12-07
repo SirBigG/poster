@@ -24,8 +24,15 @@ Go to the poster directory and install requirements:
 pip install -r requirements.txt
 ```
 And the last, you need settind database. This app work with PostgreSQL. Install postgreSQL and create database.
-Then go to the project settings and in DATABASES change NAME(your database name), USER(owner of db), PASSWORD(his password) and your HOST(for example: 127.0.0.0).
+Then go to the project settings and in DATABASES change NAME(your database name), USER(owner of db), PASSWORD(his password) and your HOST(for example: 127.0.0.0). Then run django command:
+```
+./manage.py migrate
+```
+for creating tables in database.
 
-Now your application is ready to go.
+Now your application is ready to go. Run:
+```
+./manage.py runserver
+```
 
 Thank you!!!
