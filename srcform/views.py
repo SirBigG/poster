@@ -1,7 +1,7 @@
 from django.views.generic import FormView, ListView
 
 from .forms import SearchForm
-from .models import Poster
+from .models import Poster, History
 
 import urllib2
 import json
@@ -25,21 +25,25 @@ class SearchFormView(FormView):
         if response['Response'] == 'True':
             if response['Poster'] == 'N/A':
                 message = "This movie doesn't have a poster."
+                status = -2
             else:
                 title = response['Title']
                 poster = self.get_poster(response['Poster'])
                 if not self.poster_in(title):
                     Poster.objects.create(title=title, poster=poster)
-                    message = "Poster is found!!! You can find it in the 'History'."
+                    message = "Poster is found and save!!! You can find it in the 'History'."
+                    status = 1
                 else:
                     message = "Poster is in base already. You can look through your 'History'."
+                    status = 2
                 if self.need_change(title, poster):
                     pos = Poster.objects.get(title=title)
                     os.remove(pos.poster.url)
                     pos.update(poster=poster)
         else:
             message = "There is a mistake in your request :( Please try again!"
-
+            status = -1
+        History.objects.create(text=form.cleaned_data.get('title'), status=status)
         context = self.get_context_data(**kwargs)
         context['form'] = form
         context['message'] = message
@@ -98,3 +102,13 @@ class HistoryView(ListView):
 
     def get_queryset(self):
         return Poster.objects.order_by("-date")
+
+
+class SearchHistoryView(ListView):
+    """
+    Return search history.
+    """
+    model = History
+    template_name = 'search_history.html'
+    paginate_by = 50
+

@@ -1,0 +1,30 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    {% for object in object_list %}
+        <div class="container">
+            <h1>{{ object.text }}</h1>
+            <p>{{ object.date }}</p>
+            {% if object.status == 1 %}
+                <p>found and save</p>
+            {% elif object.status == 2 %}
+                <p>in base already</p>
+            {% elif object.status == -1 %}
+                <p>mistake in enter data</p>
+            {% elif object.status == -2 %}
+                <p>not have a poster</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {% if paginator.num_pages > 1 %}
+        {% if page_obj.has_previous %}
+            <a href="/posts/{{ page_obj.previous_page_number }}/">&larr;</a>
+        {% endif %}
+        <span class="current_page">{{ paginator.number }}</span>
+        {% if page_obj.has_next %}
+            <a href="/posts/{{ page_obj.next_page_number }}/">&rarr;</a>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
