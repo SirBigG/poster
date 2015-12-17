@@ -5,15 +5,15 @@ This is django application for saving movies posters in your database.
 
 Installation:
 
-1. Download project files:
+######1 .  Download project files:
 ```   
 git clone  https://github.com/SirBigG/poster.git
 ```
-2. Go to the poster directory and install requirements:
+######2 .  Go to the poster directory and install requirements:
 ```
 sudo python setup.py install
 ```
-3. And the last, you need settind database. This app work with PostgreSQL. Install postgreSQL and create database.
+######3 .  And the last, you need settind database. This app work with PostgreSQL. Install postgreSQL and create database.
 Then go to the project settings and in DATABASES change NAME(your database name), USER(owner of db), PASSWORD(his password) and your HOST(for example: 127.0.0.0). Then run django command:
 ```
 ./manage.py migrate
